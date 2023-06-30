@@ -68,6 +68,8 @@ public:
 	ID3D12Device* GetDevice() { return device; }
 
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList; }
+
+	ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 public:
 	void GetBackBuffer();
 
@@ -106,6 +108,8 @@ private:
 	//ディスクリプターヒープの生成
 	ID3D12DescriptorHeap* rtvDescriptorHeap;
 	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc;
+
+	ID3D12DescriptorHeap* srvDescriptorHeap;
 
 	//RTVの設定
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc;

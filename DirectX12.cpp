@@ -97,11 +97,9 @@ void DirectX12::SwapChain() {
 }
 
 void DirectX12::DescriptorHeap() {
-	rtvDescriptorHeap = nullptr;
+	rtvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV,2,false);
 	rtvDescriptorHeapDesc = {};
-	
-	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;	//レンダーターゲットビュー用
-	rtvDescriptorHeapDesc.NumDescriptors = 2;	//ダブルバッファように二つ、多くても別に構わない
+
 	HRESULT hr = device->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap));
 	//ディスクリプターヒープが作れなかったので起動できない
 	assert(SUCCEEDED(hr));
@@ -129,7 +127,7 @@ void DirectX12::DescriptorHeap() {
 	//２つ目を作る
 	device->CreateRenderTargetView(swapChainResource[1], &rtvDesc, rtvHandle[1]);
 	
-
+	srvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 }
 
 void DirectX12::GetBackBuffer() {
@@ -312,6 +310,17 @@ void DirectX12::Init(WindowsAPI* windowsAPI) {
 	SwapChain();
 	DescriptorHeap();
 	Fence();
+
+	//ImGuiの初期化
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui::StyleColorsDark();
+	ImGui_ImplWin32_Init(windowsAPI_->GetHwnd());
+	ImGui_ImplDX12_Init(device, swapChainDesc.BufferCount,
+		rtvDesc.Format,
+		srvDescriptorHeap,
+		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 }
 
 void DirectX12::Update() {
@@ -363,4 +372,15 @@ ID3D12Resource* DirectX12::CreateBufferResource(ID3D12Device* device, size_t siz
 	assert(SUCCEEDED(hr));
 
 	return Resource;
+}
+
+ID3D12DescriptorHeap* DirectX12::CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
+	ID3D12DescriptorHeap* descriptorHeap = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
+	descriptorHeapDesc.Type = heapType;
+	descriptorHeapDesc.NumDescriptors = numDescriptors;
+	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+	assert(SUCCEEDED(hr));
+	return descriptorHeap;
 }
