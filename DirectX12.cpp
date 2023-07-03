@@ -97,8 +97,9 @@ void DirectX12::SwapChain() {
 }
 
 void DirectX12::DescriptorHeap() {
-	rtvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV,2,false);
+	
 	rtvDescriptorHeapDesc = {};
+	rtvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
 
 	HRESULT hr = device->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap));
 	//ディスクリプターヒープが作れなかったので起動できない
@@ -144,7 +145,16 @@ void DirectX12::RTV() {
 	commandList->ClearRenderTargetView(rtvHandle[backBufferIndex], clearColor, 0, nullptr);
 }
 
+void DirectX12::SetImGui() {
+	//描画用のDescriptorHeapの設定
+	ID3D12DescriptorHeap* descriptorHeaps[] = { srvDescriptorHeap };
+	commandList->SetDescriptorHeaps(1, descriptorHeaps);
+}
 
+void DirectX12::ImGuiDraw() {
+	//実際のcommandListのImGuiの描画コマンドを積む
+	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
+}
 
 void DirectX12::CommandKick() {
 	//GPUにコマンドリストの実行を行わせる
@@ -316,27 +326,21 @@ void DirectX12::Init(WindowsAPI* windowsAPI) {
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(windowsAPI_->GetHwnd());
-	ImGui_ImplDX12_Init(device, swapChainDesc.BufferCount,
+	ImGui_ImplDX12_Init(device, 
+		swapChainDesc.BufferCount,
 		rtvDesc.Format,
 		srvDescriptorHeap,
 		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
 		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 }
 
-void DirectX12::Update() {
-	//ゲームの処理
-	
-	Signal();
-	CommandKick();
 
-
-	ResourceLeakCheck();
-}
 
 void DirectX12::PreDraw() {
 	GetBackBuffer();
 	Barrier();
 	RTV();
+	SetImGui();
 }
 
 void DirectX12::PostDraw() {

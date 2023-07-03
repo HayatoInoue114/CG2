@@ -43,7 +43,9 @@ public:
 
 	/*void RootParameter();*/
 
-	
+	void BeginInitialize();
+
+	void PostInitialize();
 
 	void Release();
 private:

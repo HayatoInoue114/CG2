@@ -220,6 +220,21 @@ void GraphicsRenderer::Release() {
 	
 }
 
+void GraphicsRenderer::BeginInitialize() {
+	Dxc();
+	CreateRootSignature(directX12);
+	InputLayout();
+	BlendState();
+	ResterizerState();
+	BuildShader();
+	CreatePSO(directX12);
+}
+
+void GraphicsRenderer::PostInitialize() {
+	Viewport();
+	ScissorRect();
+}
+
 //void GraphicsRenderer::Init(DirectX12* directX12) {
 //	Dxc();
 //	/*CreateRootSignature(directX12);*/

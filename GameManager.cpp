@@ -32,6 +32,8 @@ void GameManager::Update() {
 	for (int i = 0; i < MAXTRIANGLE; i++) {
 		triangle_[i]->Update();
 	}
+	ImGui::ShowDemoWindow();
+	ImGui::Render();
 }
 
 void GameManager::Release() {
@@ -45,6 +47,9 @@ void GameManager::Release() {
 
 
 void GameManager::BeginFrame() {
+	ImGui_ImplDX12_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
 	directX12_->PreDraw();
 	graphicsRenderer_->DrawCall(directX12_);
 }

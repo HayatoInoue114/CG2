@@ -3,6 +3,7 @@
 #include <dxcapi.h>
 #include "Vector4.h"
 #include "MT.h"
+#include "Camera.h"
 
 #pragma comment(lib,"dxcompiler.lib")
 
@@ -50,6 +51,8 @@ private:
 
 	Transform transform_;
 	Matrix4x4 worldMatrix_;
+
+	Camera* camera;
 	
 };
 

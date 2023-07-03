@@ -55,9 +55,7 @@ public:
 	void CommandConfirm();
 
 	void Fence();
-
-	void Update();
-
+	
 	void ResourceLeakCheck();
 
 	void Release();
@@ -80,6 +78,10 @@ public:
 	void Signal();
 
 	void NextFlameCommandList();
+
+	void SetImGui();
+
+	void ImGuiDraw();
 
 private:
 	WindowsAPI* windowsAPI_;

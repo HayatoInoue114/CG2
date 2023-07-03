@@ -32,6 +32,8 @@ public:
 	void Draw();
 
 	void VariableInit();
+
+	
 private:
 	struct TriangleData
 	{

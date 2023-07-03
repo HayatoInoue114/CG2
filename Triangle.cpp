@@ -40,7 +40,7 @@ void Triangle::CreateTransformationMatrixResource() {
 	//書き込むためのアドレスを取得
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
 	//単位行列を書き込んでおく
-	*wvpData_ = MakeIdentity4x4();
+	*wvpData_ = camera->MakeWVPMatrix(transform_);
 }
 
 void Triangle::WriteDataToResource() {

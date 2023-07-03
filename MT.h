@@ -2,10 +2,9 @@
 #include<math.h>
 #include<cmath>
 
-#include "externals/imgui/imgui.h"
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/imgui/imgui_impl_win32.h"
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//クライアント領域のサイズ
+static const int32_t kCliantWidth = 1280;
+static const int32_t kCliantHeight = 720;
 
 /// <summary>
 /// 4x4行列
@@ -58,3 +57,6 @@ float InverseNum2(const Matrix4x4& m, int a, int b, int c, int d, int e, int f);
 
 //逆行列
 Matrix4x4 Inverse(const Matrix4x4& m);
+
+//1.透視投影行列
+Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
